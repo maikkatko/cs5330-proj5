@@ -1,5 +1,6 @@
-# Your name here
+# Name: Seunghan, Lee / Maik, Katko
 # Project 5: Recognition using Deep Networks
+# Date: Mar 21st, 2025
 # MNIST digit recognition using PyTorch
 
 # import statements
