@@ -1,1 +1,4 @@
-# cs5330-proj5
+# Submission info
+* Name: Seunghan, Lee / Maik, Katko
+* Operating system and IDE: Windows, VS Code
+* If using late day: No
