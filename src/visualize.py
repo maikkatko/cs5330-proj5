@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from mnist_network import MyNetwork, load_data, test_network
 
-MODEL_PATH = "./models/mnist_network.pth"
+MODEL_PATH = "../models/mnist_network.pth"
 
 def visualize_weights(network):
     weights = network.conv1.weight.detach().cpu().numpy() 

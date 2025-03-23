@@ -12,10 +12,9 @@ import torchvision
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 import numpy as np
-import cv2
 import os
 
-DATA_PATH = "./data"
+DATA_PATH = "../data/MNIST"
 
 class MyNetwork(nn.Module):
     def __init__(self):
@@ -224,8 +223,7 @@ def train_network(network, train_loader, test_loader, epochs=5):
 
     return network, train_accuracies, test_accuracies
 
-
-def save_network(network, filename='./models/mnist_network.pth'):
+def save_network(network, filename='../models/mnist_network.pth'):
     """
     Save the trained network to a file.
 
@@ -233,7 +231,7 @@ def save_network(network, filename='./models/mnist_network.pth'):
         network: Trained neural network
         filename: Path to save the network
     """
-    os.makedirs('./models', exist_ok=True)
+    os.makedirs('../models', exist_ok=True)
     torch.save(network.state_dict(), filename)
     print(f"Network saved to {filename}")
 
