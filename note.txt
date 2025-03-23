@@ -15,3 +15,7 @@ interpreted as 5 or 6, and our model has classified it as 5 instead of 6.
 Each filter is an output of the first convolution layer of size 5x5 where each patch in the original image had 10 different
 channel filters, meaning each channel filter had different functionality of gathering the feature of that specific patch. It seems like for each filter, some of the areas have higher contrast then rest of the area(i.e: filter1 (3,3)).
 It is similar to the sobelX, sobelY-like gradient filters for edge detection. 
+
+
+3. Transfer Learning on Greek Letters
+After running 15 epochs, we have learned that something around 5~6 epochs were enough to do the transfer learning. 
