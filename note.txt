@@ -11,6 +11,11 @@ We could say it as an example of benign overfitting as model we built generalize
 Our model has learned the pattern of the handwritten numbers quite well. For the 9th image, it seems like it can be both 
 interpreted as 5 or 6, and our model has classified it as 5 instead of 6.
 
+1.F: Test the network on new inputs
+Our model has successfully classified all the digits except for the 0 digit. It classified it as 9 instead of 0. It seems likely
+that if the digit was written thicker the result would have been more accurate. Also, I believe the model weight that we trained on
+had less stronger edge detection on the lower part where the digit 9 and 0 makes difference.
+
 2.A: Analyze the first layer
 Each filter is an output of the first convolution layer of size 5x5 where each patch in the original image had 10 different
 channel filters, meaning each channel filter had different functionality of gathering the feature of that specific patch. It seems like for each filter, some of the areas have higher contrast then rest of the area(i.e: filter1 (3,3)).
@@ -18,4 +23,6 @@ It is similar to the sobelX, sobelY-like gradient filters for edge detection.
 
 
 3. Transfer Learning on Greek Letters
-After running 15 epochs, we have learned that something around 5~6 epochs were enough to do the transfer learning. 
+After running 15 epochs, we have learned that something around 5~6 epochs were enough to do the transfer learning.
+
+For running the experiment on our training data, it has successfully classfied all three variation as can be seen in the image.

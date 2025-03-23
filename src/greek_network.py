@@ -12,6 +12,7 @@ from mnist_network import MyNetwork, test_network
 
 MODEL_PATH = "../models/mnist_network.pth"
 DATA_PATH = "../data/greek_train"
+CUSTOM_PATH = "../data/greek_custom"
 
 class GreekTransform(MyNetwork):
     def __init__(self):
@@ -26,17 +27,56 @@ class GreekTransform(MyNetwork):
         x = torchvision.transforms.functional.center_crop( x, (28, 28) )
         return torchvision.transforms.functional.invert( x )
 
-def load_data_greek():
+def load_data_greek(data_path):
     # DataLoader for the Greek data set
     greek_train = torch.utils.data.DataLoader(
-        torchvision.datasets.ImageFolder( DATA_PATH,
+        torchvision.datasets.ImageFolder( data_path,
                                           transform = torchvision.transforms.Compose( [torchvision.transforms.ToTensor(),
                                                                                        GreekTransform(),
                                                                                        torchvision.transforms.Normalize(
                                                                                            (0.1307,), (0.3081,) ) ] ) ),
-        batch_size = 5,
+        batch_size = 3,
         shuffle = True )
     return greek_train
+
+def test_custom_data(network, test_loader):
+
+    network.eval()
+
+    examples = iter(test_loader)
+    example_data, example_targets = next(examples)
+    example_data = example_data[:3]
+    example_targets = example_targets[:3]
+
+    with torch.no_grad():
+        output = network(example_data)
+
+    # Print the network output values, predicted class, and correct label
+    for i in range(3):
+        output_values = output[i].numpy()
+        predicted_class = output[i].argmax().item()
+        correct_label = example_targets[i].item()
+
+        # Print with 2 decimal places
+        print(f"Example {i+1}:")
+        print(
+            f"  Network Output: [{', '.join([f'{val:.2f}' for val in output_values])}]")
+        print(f"  Predicted Class: {predicted_class}")
+        print(f"  Correct Label: {correct_label}")
+
+    # Plot the first 9 examples with predictions
+    fig = plt.figure(figsize=(12, 8))
+    for i in range(3):
+        plt.subplot(1, 3, i+1)
+        plt.tight_layout()
+        plt.imshow(example_data[i][0], cmap='gray', interpolation='none')
+        plt.title(f"Prediction: {output[i].argmax().item()}")
+        plt.xticks([])
+        plt.yticks([])
+    os.makedirs('./results', exist_ok=True)
+    plt.savefig('./results/predictions_greek_custom.png')
+    plt.show()
+    plt.close(fig)
 
 def train_greek_network(network, train_loader, epochs=5):
     """
@@ -130,11 +170,15 @@ def main():
     network.fc2 = nn.Linear(50, 3)
     print(network)
 
-    # Load the datat
-    # train_loader = load_data_greek()
-    # print(train_loader)
+    # Load the data
+    train_loader = load_data_greek(DATA_PATH)
+    print(train_loader)
 
-    # train_greek_network(network, train_loader, 5)
+    train_greek_network(network, train_loader, 7)
+
+    # Classify Custom dataset
+    test_loader = load_data_greek(CUSTOM_PATH)
+    test_custom_data(network, test_loader)
 
 if __name__ == "__main__":
     main()
