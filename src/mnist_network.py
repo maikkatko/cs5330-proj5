@@ -15,8 +15,7 @@ import numpy as np
 import cv2
 import os
 
-# class definitions
-
+DATA_PATH = "./data"
 
 class MyNetwork(nn.Module):
     def __init__(self):
@@ -51,9 +50,6 @@ class MyNetwork(nn.Module):
         # Apply log_softmax function
         return torch.nn.functional.log_softmax(x, dim=1)
 
-# useful functions with a comment for each function
-
-
 def load_data(batch_size=64):
     """
     Load the MNIST digit dataset.
@@ -67,7 +63,7 @@ def load_data(batch_size=64):
 
     # Load training data
     train_dataset = torchvision.datasets.MNIST(
-        root='./data',
+        root=DATA_PATH,
         train=True,
         download=True,
         transform=transform
@@ -80,7 +76,7 @@ def load_data(batch_size=64):
 
     # Load test data
     test_dataset = torchvision.datasets.MNIST(
-        root='./data',
+        root=DATA_PATH,
         train=False,
         download=True,
         transform=transform
@@ -120,6 +116,7 @@ def visualize_examples(data_loader, num_examples=6):
     os.makedirs('./results', exist_ok=True)
     plt.savefig('./results/examples.png')
     plt.show()
+    plt.close(fig)
 
 
 def train_network(network, train_loader, test_loader, epochs=5):
@@ -140,6 +137,8 @@ def train_network(network, train_loader, test_loader, epochs=5):
 
     train_accuracies = []
     test_accuracies = []
+    training_losses = []
+    test_losses = []
 
     for epoch in range(epochs):
         # Training
@@ -150,7 +149,10 @@ def train_network(network, train_loader, test_loader, epochs=5):
         for batch_idx, (data, target) in enumerate(train_loader):
             optimizer.zero_grad()
             output = network(data)
+            
             loss = criterion(output, target)
+            training_losses.append(loss.item())
+            
             loss.backward()
             optimizer.step()
 
@@ -179,7 +181,8 @@ def train_network(network, train_loader, test_loader, epochs=5):
                 pred = output.argmax(dim=1, keepdim=True)
                 test_correct += pred.eq(target.view_as(pred)).sum().item()
 
-        test_loss /= len(test_loader.dataset)
+        test_loss /= len(test_loader)
+        test_losses.append(test_loss)
         test_accuracy = 100. * test_correct / len(test_loader.dataset)
         test_accuracies.append(test_accuracy)
 
@@ -188,8 +191,25 @@ def train_network(network, train_loader, test_loader, epochs=5):
         print(f'  Training Accuracy: {train_accuracy:.2f}%')
         print(f'  Testing Accuracy: {test_accuracy:.2f}%')
 
-    # Plot training and testing accuracy
-    plt.figure(figsize=(10, 6))
+    # Plot training and test loss
+    fig = plt.figure(figsize=(10, 6))
+    print(f"len_test: {len(test_losses)}")
+    for i in range(len(test_losses)):
+        print(f"This is the test losses: {test_losses[i]}")
+    plt.plot(range(1, len(training_losses) + 1), training_losses,
+             'b-', label='Training Losses')
+    plt.scatter(range(1, len(training_losses) + 1, int(len(training_losses) / epochs)), test_losses, color='r', s=50) 
+    plt.xlabel('number of training examples seen')
+    plt.ylabel('negative log likelihood loss')
+    plt.title('Training and Testing Accuracy')
+    plt.legend()
+    os.makedirs('./results', exist_ok=True)
+    plt.savefig('./results/loss.png')
+    plt.show()
+    plt.close(fig)
+
+    # Plot training and test accuracy
+    fig = plt.figure(figsize=(10, 6))
     plt.plot(range(1, epochs+1), test_accuracies,
              'b-', label='Testing Accuracy')
     plt.plot(range(1, epochs+1), train_accuracies,
@@ -198,10 +218,9 @@ def train_network(network, train_loader, test_loader, epochs=5):
     plt.ylabel('Accuracy (%)')
     plt.title('Training and Testing Accuracy')
     plt.legend()
-    plt.grid(True)
-    os.makedirs('./results', exist_ok=True)
     plt.savefig('./results/accuracy.png')
     plt.show()
+    plt.close(fig)
 
     return network, train_accuracies, test_accuracies
 
@@ -217,7 +236,6 @@ def save_network(network, filename='./models/mnist_network.pth'):
     os.makedirs('./models', exist_ok=True)
     torch.save(network.state_dict(), filename)
     print(f"Network saved to {filename}")
-
 
 def test_network(network, test_loader):
     """
@@ -263,7 +281,7 @@ def test_network(network, test_loader):
     os.makedirs('./results', exist_ok=True)
     plt.savefig('./results/predictions.png')
     plt.show()
-
+    plt.close(fig)
 
 def process_handwritten_digits(network):
     """
@@ -274,9 +292,6 @@ def process_handwritten_digits(network):
     """
     # Need to implement
     pass
-
-# main function
-
 
 def main(argv):
     """
@@ -289,24 +304,21 @@ def main(argv):
     train_loader, test_loader = load_data()
 
     # Visualize examples
-    visualize_examples(test_loader)
+    # visualize_examples(test_loader)
 
     # Create network
     network = MyNetwork()
-    print(network)
+    # print(network)
 
     # Train network
-    network, train_accuracies, test_accuracies = train_network(
+    network, _, _ = train_network(
         network, train_loader, test_loader)
 
     # Save network
-    save_network(network)
+    # save_network(network)
 
     # Test network
-    test_network(network, test_loader)
-
-    return
-
+    # test_network(network, test_loader)
 
 if __name__ == "__main__":
     main(sys.argv)
