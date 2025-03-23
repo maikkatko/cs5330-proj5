@@ -14,7 +14,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
+# Check if CUDA is available and set up device
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(f"Using device: {device}")
+
 DATA_PATH = "../data/MNIST"
+
 
 class MyNetwork(nn.Module):
     def __init__(self):
@@ -48,6 +53,7 @@ class MyNetwork(nn.Module):
         x = self.fc2(x)
         # Apply log_softmax function
         return torch.nn.functional.log_softmax(x, dim=1)
+
 
 def load_data(batch_size=64):
     """
@@ -131,6 +137,21 @@ def train_network(network, train_loader, test_loader, epochs=5):
     Returns:
         Trained network and training/testing accuracies
     """
+    """
+    Train the neural network.
+
+    Args:
+        network: The neural network model
+        train_loader: DataLoader for training data
+        test_loader: DataLoader for test data
+        epochs: Number of training epochs
+
+    Returns:
+        Trained network and training/testing accuracies
+    """
+    # Move network to GPU if available
+    network = network.to(device)
+
     optimizer = optim.SGD(network.parameters(), lr=0.01, momentum=0.5)
     criterion = nn.NLLLoss()
 
@@ -146,12 +167,15 @@ def train_network(network, train_loader, test_loader, epochs=5):
         train_total = 0
 
         for batch_idx, (data, target) in enumerate(train_loader):
+            # Move data to device (GPU or CPU)
+            data, target = data.to(device), target.to(device)
+
             optimizer.zero_grad()
             output = network(data)
-            
+
             loss = criterion(output, target)
             training_losses.append(loss.item())
-            
+
             loss.backward()
             optimizer.step()
 
@@ -175,6 +199,9 @@ def train_network(network, train_loader, test_loader, epochs=5):
 
         with torch.no_grad():
             for data, target in test_loader:
+                # Move data to device (GPU or CPU)
+                data, target = data.to(device), target.to(device)
+
                 output = network(data)
                 test_loss += criterion(output, target).item()
                 pred = output.argmax(dim=1, keepdim=True)
@@ -197,7 +224,8 @@ def train_network(network, train_loader, test_loader, epochs=5):
         print(f"This is the test losses: {test_losses[i]}")
     plt.plot(range(1, len(training_losses) + 1), training_losses,
              'b-', label='Training Losses')
-    plt.scatter(range(1, len(training_losses) + 1, int(len(training_losses) / epochs)), test_losses, color='r', s=50) 
+    plt.scatter(range(1, len(training_losses) + 1,
+                int(len(training_losses) / epochs)), test_losses, color='r', s=50)
     plt.xlabel('number of training examples seen')
     plt.ylabel('negative log likelihood loss')
     plt.title('Training and Testing Accuracy')
@@ -223,6 +251,7 @@ def train_network(network, train_loader, test_loader, epochs=5):
 
     return network, train_accuracies, test_accuracies
 
+
 def save_network(network, filename='../models/mnist_network.pth'):
     """
     Save the trained network to a file.
@@ -235,6 +264,7 @@ def save_network(network, filename='../models/mnist_network.pth'):
     torch.save(network.state_dict(), filename)
     print(f"Network saved to {filename}")
 
+
 def test_network(network, test_loader, visualize=True):
     """
     Test the network on the first 10 examples of the test set.
@@ -243,6 +273,7 @@ def test_network(network, test_loader, visualize=True):
         network: Trained neural network
         test_loader: DataLoader for test data
     """
+    network = network.to(device)
     network.eval()
 
     # Get the first batch
@@ -252,11 +283,15 @@ def test_network(network, test_loader, visualize=True):
     example_targets = example_targets[:10]
 
     with torch.no_grad():
+        # Move data to device
+        example_data, example_targets = example_data.to(
+            device), example_targets.to(device)
         output = network(example_data)
 
     # Print the network output values, predicted class, and correct label
     for i in range(10):
-        output_values = output[i].numpy()
+        # Move output back to CPU for numpy conversion
+        output_values = output[i].cpu().numpy()
         predicted_class = output[i].argmax().item()
         correct_label = example_targets[i].item()
 
@@ -273,7 +308,9 @@ def test_network(network, test_loader, visualize=True):
         for i in range(9):
             plt.subplot(3, 3, i+1)
             plt.tight_layout()
-            plt.imshow(example_data[i][0], cmap='gray', interpolation='none')
+            # Move data back to CPU for matplotlib
+            plt.imshow(example_data[i][0].cpu(),
+                       cmap='gray', interpolation='none')
             plt.title(f"Prediction: {output[i].argmax().item()}")
             plt.xticks([])
             plt.yticks([])
@@ -281,6 +318,7 @@ def test_network(network, test_loader, visualize=True):
         plt.savefig('./results/predictions.png')
         plt.show()
         plt.close(fig)
+
 
 def main(argv):
     """
@@ -308,6 +346,7 @@ def main(argv):
 
     # Test network
     # test_network(network, test_loader)
+
 
 if __name__ == "__main__":
     main(sys.argv)

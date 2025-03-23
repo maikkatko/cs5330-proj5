@@ -26,3 +26,18 @@ It is similar to the sobelX, sobelY-like gradient filters for edge detection.
 After running 15 epochs, we have learned that something around 5~6 epochs were enough to do the transfer learning.
 
 For running the experiment on our training data, it has successfully classfied all three variation as can be seen in the image.
+
+4. MNIST Network Architecture Experiment
+This experiment aims to analyze how changes to the neural network architecture affect the performance of MNIST digit recognition. We'll systematically vary three key dimensions of the network architecture to understand their impact on both accuracy and training. We analyze number of convolutional filters, dropout rate, and batch size to see the impact on performance. Hypothesis for each of these is as follows:
+
+Number of Convolutional Filters
+
+Hypothesis: Increasing the number of convolutional filters will improve model accuracy up to a point, after which we'll see diminishing returns. However, more filters will always increase training time approximately linearly.
+
+Dropout Rate
+
+Hypothesis: A moderate dropout rate (around 0.25) will yield the best test accuracy. Too low (0.1) and the model might overfit; too high (0.5) and it might struggle to learn effectively. Training time should be relatively unaffected by dropout rate.
+
+Batch Size
+
+Hypothesis: Larger batch sizes will train faster in wall-clock time but may achieve slightly lower accuracy. The optimal batch size for accuracy will likely be in the middle range (64-128).
