@@ -237,7 +237,7 @@ def save_network(network, filename='./models/mnist_network.pth'):
     torch.save(network.state_dict(), filename)
     print(f"Network saved to {filename}")
 
-def test_network(network, test_loader):
+def test_network(network, test_loader, visualize=True):
     """
     Test the network on the first 10 examples of the test set.
 
@@ -270,28 +270,19 @@ def test_network(network, test_loader):
         print(f"  Correct Label: {correct_label}")
 
     # Plot the first 9 examples with predictions
-    fig = plt.figure(figsize=(12, 8))
-    for i in range(9):
-        plt.subplot(3, 3, i+1)
-        plt.tight_layout()
-        plt.imshow(example_data[i][0], cmap='gray', interpolation='none')
-        plt.title(f"Prediction: {output[i].argmax().item()}")
-        plt.xticks([])
-        plt.yticks([])
-    os.makedirs('./results', exist_ok=True)
-    plt.savefig('./results/predictions.png')
-    plt.show()
-    plt.close(fig)
-
-def process_handwritten_digits(network):
-    """
-    Process handwritten digits from images.
-
-    Args:
-        network: Trained neural network
-    """
-    # Need to implement
-    pass
+    if visualize:
+        fig = plt.figure(figsize=(12, 8))
+        for i in range(9):
+            plt.subplot(3, 3, i+1)
+            plt.tight_layout()
+            plt.imshow(example_data[i][0], cmap='gray', interpolation='none')
+            plt.title(f"Prediction: {output[i].argmax().item()}")
+            plt.xticks([])
+            plt.yticks([])
+        os.makedirs('./results', exist_ok=True)
+        plt.savefig('./results/predictions.png')
+        plt.show()
+        plt.close(fig)
 
 def main(argv):
     """
