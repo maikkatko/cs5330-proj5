@@ -1,20 +1,28 @@
-import sys
+
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torchvision
-import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
-import numpy as np
-import cv2
 import os
-from mnist_network import MyNetwork, test_network
+from mnist_network import MyNetwork
 
 MODEL_PATH = "../models/mnist_network.pth"
 DATA_PATH = "../data/greek_train"
 CUSTOM_PATH = "../data/greek_custom"
 
 class GreekTransform(MyNetwork):
+    """
+    A neural network transformation class that modifies input images before processing.
+
+    This class inherits from MyNetwork and overrides the last fully connected layer 
+    to have 3 output nodes. It also applies a series of image transformations:
+    - Converts RGB images to grayscale.
+    - Scales the image by a factor of 36/128.
+    - Crops the center to a 28x28 size.
+    - Inverts the pixel values.
+    """    
     def __init__(self):
         super().__init__()
         
@@ -28,6 +36,15 @@ class GreekTransform(MyNetwork):
         return torchvision.transforms.functional.invert( x )
 
 def load_data_greek(data_path):
+    """
+    Loads the Greek dataset using a DataLoader with preprocessing transformations.
+    
+    Args:
+        data_path (str): Path to the dataset directory.
+    
+    Returns:
+        DataLoader: A DataLoader for the Greek dataset with batching and shuffling.
+    """    
     # DataLoader for the Greek data set
     greek_train = torch.utils.data.DataLoader(
         torchvision.datasets.ImageFolder( data_path,
@@ -40,7 +57,16 @@ def load_data_greek(data_path):
     return greek_train
 
 def test_custom_data(network, test_loader):
-
+    """
+    Tests a neural network on a custom dataset and visualizes predictions.
+    
+    Args:
+        network (torch.nn.Module): The trained neural network model.
+        test_loader (DataLoader): DataLoader for the test dataset.
+    
+    Performs inference on a small batch, prints the network output, predicted 
+    classes, and correct labels, and visualizes the predictions.
+    """
     network.eval()
 
     examples = iter(test_loader)
@@ -157,7 +183,10 @@ def train_greek_network(network, train_loader, epochs=5):
     return network, train_accuracies
 
 def main():
-
+    """
+    Loads a pretrained neural network, modifies its output layer, and trains it 
+    on the Greek dataset before testing it on a custom dataset.
+    """
     # Load the network
     network = MyNetwork()
     network.load_state_dict(torch.load(MODEL_PATH, map_location=torch.device('cpu')))

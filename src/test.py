@@ -1,3 +1,10 @@
+"""
+Name: Seunghan, Lee / Maik, Katko
+Project 5: Recognition using Deep Networks
+Date: Mar 21st, 2025
+This file contains test for custom dataset for the MNIST digit recognition dataset.
+"""
+
 import os
 import torch
 import torch.nn as nn
@@ -13,6 +20,21 @@ MODEL_PATH = "../models/mnist_network.pth"
 CUSTOM_PATH = "../data/MNIST_custom"
 
 def load_custom_data(custom_data_path):
+    """
+    Loads a custom dataset using a DataLoader with preprocessing transformations.
+
+    Args:
+        custom_data_path (str): Path to the custom dataset directory.
+
+    Returns:
+        DataLoader: A DataLoader for the custom dataset with batching and shuffling.
+    
+    The dataset undergoes the following transformations:
+    - Resizing images to 28x28 pixels.
+    - Converting images to grayscale.
+    - Converting images to tensors.
+    - Normalizing with mean 0.1307 and standard deviation 0.3081.
+    """    
     # DataLoader for the Greek data set
     greek_train = torch.utils.data.DataLoader(
         torchvision.datasets.ImageFolder( custom_data_path,
@@ -26,7 +48,17 @@ def load_custom_data(custom_data_path):
     return greek_train
 
 def test_custom_data(network, test_loader):
+    """
+    Tests a neural network on a custom dataset and visualizes predictions.
 
+    Args:
+        network (torch.nn.Module): The trained neural network model.
+        test_loader (DataLoader): DataLoader for the test dataset.
+
+    Performs inference on a batch of 10 images, prints the network output values,
+    predicted classes, and correct labels, and visualizes the first 9 predictions.
+    Saves the resulting plot to './results/predictions_custom.png'.
+    """
     network.eval()
 
     examples = iter(test_loader)
@@ -65,6 +97,14 @@ def test_custom_data(network, test_loader):
     plt.close(fig)
 
 def main():
+    """
+    Loads a pretrained neural network and tests it on a custom dataset.
+
+    - Loads the test dataset.
+    - Initializes the neural network and loads pretrained weights.
+    - Loads the custom dataset.
+    - Evaluates the network on the custom dataset.
+    """    
     _, test_loader = load_data()
     network = MyNetwork()
     network.load_state_dict(torch.load(MODEL_PATH, map_location=torch.device('cpu')))

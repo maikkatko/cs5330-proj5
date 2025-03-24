@@ -1,9 +1,10 @@
-# Name: Seunghan, Lee / Maik, Katko
-# Project 5: Recognition using Deep Networks
-# Date: Mar 21st, 2025
-# MNIST digit recognition using PyTorch
+"""
+Name: Seunghan, Lee / Maik, Katko
+Project 5: Recognition using Deep Networks
+Date: Mar 21st, 2025
+This file contains a model for MNIST digit recognition using PyTorch.
+"""
 
-# import statements
 import sys
 import torch
 import torch.nn as nn
@@ -20,8 +21,19 @@ print(f"Using device: {device}")
 
 DATA_PATH = "../data/MNIST"
 
-
 class MyNetwork(nn.Module):
+    """
+    A convolutional neural network (CNN) for image classification.
+
+    The network consists of:
+    - Two convolutional layers with ReLU activation and max pooling.
+    - A dropout layer for regularization.
+    - Two fully connected layers.
+    - A final log softmax activation for classification.
+
+    Methods:
+        forward(x): Computes the forward pass of the network.
+    """    
     def __init__(self):
         super(MyNetwork, self).__init__()
         # A convolution layer with 10 5x5 filters
@@ -53,7 +65,6 @@ class MyNetwork(nn.Module):
         x = self.fc2(x)
         # Apply log_softmax function
         return torch.nn.functional.log_softmax(x, dim=1)
-
 
 def load_data(batch_size=64):
     """
@@ -251,7 +262,6 @@ def train_network(network, train_loader, test_loader, epochs=5):
 
     return network, train_accuracies, test_accuracies
 
-
 def save_network(network, filename='../models/mnist_network.pth'):
     """
     Save the trained network to a file.
@@ -319,7 +329,6 @@ def test_network(network, test_loader, visualize=True):
         plt.show()
         plt.close(fig)
 
-
 def main(argv):
     """
     Main function for the MNIST digit recognition task.
@@ -346,7 +355,6 @@ def main(argv):
 
     # Test network
     # test_network(network, test_loader)
-
 
 if __name__ == "__main__":
     main(sys.argv)

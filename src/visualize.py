@@ -1,3 +1,10 @@
+"""
+Name: Seunghan, Lee / Maik, Katko
+Project 5: Recognition using Deep Networks
+Date: Mar 21st, 2025
+This file contains a weight and layer visualization script for task 2 of the project.
+"""
+
 import os
 import cv2
 import torch

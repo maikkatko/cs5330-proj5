@@ -1,9 +1,10 @@
-# Name: [Your Name]
-# Project 5: Recognition using Deep Networks - Experiment
-# Date: Mar 23rd, 2025
-# MNIST network architecture experiment
+"""
+Name: Seunghan, Lee / Maik, Katko
+Project 5: Recognition using Deep Networks - Experiment
+Date: Mar 23rd, 2025
+This file includes MNIST network architecture experiment for fashion data.
+"""
 
-# import statements
 import sys
 import torch
 import torch.nn as nn
@@ -26,7 +27,6 @@ DATA_PATH = "../data/MNIST"
 FASHION_DATA_PATH = "../data/FashionMNIST"
 RESULTS_DIR = "./experiment_results"
 os.makedirs(RESULTS_DIR, exist_ok=True)
-
 
 class ExperimentNetwork(nn.Module):
     """
