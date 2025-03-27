@@ -14,9 +14,9 @@ import os
 import numpy as np
 from mnist_network import MyNetwork
 
-MODEL_PATH = "models/mnist_network.pth"
-DATA_PATH = "data/greek_extended"
-CUSTOM_PATH = "data/greek_custom_extended"
+MODEL_PATH = "../models/mnist_network.pth"
+DATA_PATH = "../data/greek_extended"
+CUSTOM_PATH = "../data/greek_custom_extended"
 RESULTS_DIR = "./results"
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
@@ -309,8 +309,8 @@ def main():
 
     # Save the trained model
     os.makedirs('models', exist_ok=True)
-    torch.save(network.state_dict(), 'models/greek_extended_network.pth')
-    print("Network saved to models/greek_extended_network.pth")
+    torch.save(network.state_dict(), '../models/greek_extended_network.pth')
+    print("Network saved to ../models/greek_extended_network.pth")
 
     # Classify custom dataset if available
     if os.path.exists(CUSTOM_PATH):

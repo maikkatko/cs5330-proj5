@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 import os
 from mnist_network import MyNetwork
 
-MODEL_PATH = "models/mnist_network.pth"
-DATA_PATH = "data/greek_train"
-CUSTOM_PATH = "data/greek_custom"
+MODEL_PATH = "../models/mnist_network.pth"
+DATA_PATH = "../data/greek_train"
+CUSTOM_PATH = "../data/greek_custom"
 
 
 class GreekTransform(MyNetwork):

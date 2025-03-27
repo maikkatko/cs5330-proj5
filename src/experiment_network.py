@@ -23,8 +23,8 @@ from mnist_network import load_data
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Using device: {device}")
 
-DATA_PATH = "data/MNIST"
-FASHION_DATA_PATH = "data/FashionMNIST"
+DATA_PATH = "../data/MNIST"
+FASHION_DATA_PATH = "../data/FashionMNIST"
 RESULTS_DIR = "./experiment_results"
 os.makedirs(RESULTS_DIR, exist_ok=True)
 

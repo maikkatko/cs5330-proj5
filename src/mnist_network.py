@@ -19,7 +19,7 @@ import os
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Using device: {device}")
 
-DATA_PATH = "data/MNIST"
+DATA_PATH = "../data/MNIST"
 
 
 class MyNetwork(nn.Module):

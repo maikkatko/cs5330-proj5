@@ -20,8 +20,8 @@ GREEK_LETTERS = ['alpha', 'beta', 'gamma',
 NUM_CLASSES = len(GREEK_LETTERS)
 
 # Define paths
-MODEL_PATH = "models/greek_extended_network.pth"
-CUSTOM_PATH = "data/greek_custom_extended"
+MODEL_PATH = "../models/greek_extended_network.pth"
+CUSTOM_PATH = "../data/greek_custom_extended"
 RESULTS_DIR = "./results"
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
