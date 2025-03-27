@@ -8,9 +8,10 @@ import matplotlib.pyplot as plt
 import os
 from mnist_network import MyNetwork
 
-MODEL_PATH = "../models/mnist_network.pth"
-DATA_PATH = "../data/greek_train"
-CUSTOM_PATH = "../data/greek_custom"
+MODEL_PATH = "models/mnist_network.pth"
+DATA_PATH = "data/greek_train"
+CUSTOM_PATH = "data/greek_custom"
+
 
 class GreekTransform(MyNetwork):
     """
@@ -22,48 +23,51 @@ class GreekTransform(MyNetwork):
     - Scales the image by a factor of 36/128.
     - Crops the center to a 28x28 size.
     - Inverts the pixel values.
-    """    
+    """
+
     def __init__(self):
         super().__init__()
-        
+
         # replace the last layer with the 3 nodes
         self.fc2 = nn.Linear(50, 3)
 
     def __call__(self, x):
-        x = torchvision.transforms.functional.rgb_to_grayscale( x )
-        x = torchvision.transforms.functional.affine( x, 0, (0,0), 36/128, 0 )
-        x = torchvision.transforms.functional.center_crop( x, (28, 28) )
-        return torchvision.transforms.functional.invert( x )
+        x = torchvision.transforms.functional.rgb_to_grayscale(x)
+        x = torchvision.transforms.functional.affine(x, 0, (0, 0), 36/128, 0)
+        x = torchvision.transforms.functional.center_crop(x, (28, 28))
+        return torchvision.transforms.functional.invert(x)
+
 
 def load_data_greek(data_path):
     """
     Loads the Greek dataset using a DataLoader with preprocessing transformations.
-    
+
     Args:
         data_path (str): Path to the dataset directory.
-    
+
     Returns:
         DataLoader: A DataLoader for the Greek dataset with batching and shuffling.
-    """    
+    """
     # DataLoader for the Greek data set
     greek_train = torch.utils.data.DataLoader(
-        torchvision.datasets.ImageFolder( data_path,
-                                          transform = torchvision.transforms.Compose( [torchvision.transforms.ToTensor(),
-                                                                                       GreekTransform(),
-                                                                                       torchvision.transforms.Normalize(
-                                                                                           (0.1307,), (0.3081,) ) ] ) ),
-        batch_size = 3,
-        shuffle = True )
+        torchvision.datasets.ImageFolder(data_path,
+                                         transform=torchvision.transforms.Compose([torchvision.transforms.ToTensor(),
+                                                                                   GreekTransform(),
+                                                                                   torchvision.transforms.Normalize(
+                                             (0.1307,), (0.3081,))])),
+        batch_size=3,
+        shuffle=True)
     return greek_train
+
 
 def test_custom_data(network, test_loader):
     """
     Tests a neural network on a custom dataset and visualizes predictions.
-    
+
     Args:
         network (torch.nn.Module): The trained neural network model.
         test_loader (DataLoader): DataLoader for the test dataset.
-    
+
     Performs inference on a small batch, prints the network output, predicted 
     classes, and correct labels, and visualizes the predictions.
     """
@@ -104,6 +108,7 @@ def test_custom_data(network, test_loader):
     plt.show()
     plt.close(fig)
 
+
 def train_greek_network(network, train_loader, epochs=5):
     """
     Train the neural network.
@@ -132,10 +137,10 @@ def train_greek_network(network, train_loader, epochs=5):
         for batch_idx, (data, target) in enumerate(train_loader):
             optimizer.zero_grad()
             output = network(data)
-            
+
             loss = criterion(output, target)
             training_losses.append(loss.item())
-            
+
             loss.backward()
             optimizer.step()
 
@@ -182,6 +187,7 @@ def train_greek_network(network, train_loader, epochs=5):
 
     return network, train_accuracies
 
+
 def main():
     """
     Loads a pretrained neural network, modifies its output layer, and trains it 
@@ -189,7 +195,8 @@ def main():
     """
     # Load the network
     network = MyNetwork()
-    network.load_state_dict(torch.load(MODEL_PATH, map_location=torch.device('cpu')))
+    network.load_state_dict(torch.load(
+        MODEL_PATH, map_location=torch.device('cpu')))
 
     # Freeze the params
     for param in network.parameters():
@@ -208,6 +215,7 @@ def main():
     # Classify Custom dataset
     test_loader = load_data_greek(CUSTOM_PATH)
     test_custom_data(network, test_loader)
+
 
 if __name__ == "__main__":
     main()
